@@ -29,7 +29,6 @@ namespace D2RModding_SpriteEdit
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -326,7 +325,6 @@ namespace D2RModding_SpriteEdit
 			// 
 			this.imagePreview.Cursor = System.Windows.Forms.Cursors.SizeAll;
 			this.imagePreview.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.imagePreview.Image = ((System.Drawing.Image)(resources.GetObject("imagePreview.Image")));
 			this.imagePreview.Location = new System.Drawing.Point(0, 0);
 			this.imagePreview.Name = "imagePreview";
 			this.imagePreview.Size = new System.Drawing.Size(1029, 604);
@@ -437,6 +435,7 @@ namespace D2RModding_SpriteEdit
 			this.resetPan.TabIndex = 6;
 			this.resetPan.Text = "Reset Pan";
 			this.resetPan.UseVisualStyleBackColor = true;
+			this.resetPan.Click += new System.EventHandler(this.onResetPan);
 			// 
 			// label1
 			// 

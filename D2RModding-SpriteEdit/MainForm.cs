@@ -14,8 +14,11 @@ using System.Drawing.Imaging;
 namespace D2RModding_SpriteEdit
 {
     public partial class MainForm : Form
-    {
-        private bool needToSave = false;
+	{
+		int imageOffSetX = 0;
+		int imageOffSetY = 0;
+
+		private bool needToSave = false;
         private uint _currentFrameCount;
         private uint currentFrameCount
         {
@@ -105,8 +108,12 @@ namespace D2RModding_SpriteEdit
             if(currentImage == null)
             {
                 return;
-            }
-            int sourceWidth = currentImage.Width;
+			}
+
+			imageOffSetX = 0;
+			imageOffSetY = 0;
+
+			int sourceWidth = currentImage.Width;
             int sourceHeight = currentImage.Height;
             int newWidth, newHeight, frameWidth = 0;
             if (hasFrames && currentFrameCount > 0)
@@ -502,13 +509,20 @@ namespace D2RModding_SpriteEdit
         private void onMouseUp(object sender, MouseEventArgs e)
         {
             isPanning = false;
-        }
-        private void onMouseMove(object sender, MouseEventArgs e)
+
+			imageOffSetX += e.Location.X - mouseDownLocation.X;
+			imageOffSetY += e.Location.Y - mouseDownLocation.Y;
+		}
+
+		private void onMouseMove(object sender, MouseEventArgs e)
         {
             if(isPanning)
             {
-                Point center = GetImageCenterPoint();
-                currentPan = new Point(e.Location.X - mouseDownLocation.X + center.X, e.Location.Y - mouseDownLocation.Y + center.Y);
+                int newOffSetX = imageOffSetX + e.Location.X - mouseDownLocation.X;
+				int newOffSetY = imageOffSetY + e.Location.Y - mouseDownLocation.Y;
+
+				Point center = GetImageCenterPoint();
+                currentPan = new Point(newOffSetX + center.X, newOffSetY + center.Y);
                 imagePreview.Invalidate();
             }
         }
@@ -518,8 +532,10 @@ namespace D2RModding_SpriteEdit
         }
         private void onResetPan(object sender, EventArgs e)
         {
-            currentPan = GetImageCenterPoint();
-            imagePreview.Invalidate();
+			imageOffSetX = 0;
+			imageOffSetY = 0;
+			currentPan = GetImageCenterPoint();
+			imagePreview.Invalidate();
 		}
 
         private Point GetImageCenterPoint()
