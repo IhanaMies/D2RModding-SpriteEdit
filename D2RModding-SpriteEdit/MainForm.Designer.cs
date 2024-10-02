@@ -42,7 +42,6 @@ namespace D2RModding_SpriteEdit
 			this.massExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportFrameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.massExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.transformToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
