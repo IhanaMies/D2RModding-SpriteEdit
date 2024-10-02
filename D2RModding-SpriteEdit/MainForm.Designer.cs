@@ -39,6 +39,7 @@ namespace D2RModding_SpriteEdit
             this.combineFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.massTranslateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.massExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportFrameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.massExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,6 +79,7 @@ namespace D2RModding_SpriteEdit
             // 
             // menuStrip1
             // 
+			this.menuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.transformToolStripMenuItem,
@@ -302,6 +304,7 @@ namespace D2RModding_SpriteEdit
             // 
             // statusStrip1
             // 
+			this.statusStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolbarText});
             this.statusStrip1.Location = new System.Drawing.Point(0, 631);
@@ -333,6 +336,7 @@ namespace D2RModding_SpriteEdit
             // 
             // toolStrip1
             // 
+			this.toolStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabel1,
             this.numFramesTextBox,
@@ -373,6 +377,7 @@ namespace D2RModding_SpriteEdit
             // frameSelectionComboBox
             // 
             this.frameSelectionComboBox.Enabled = false;
+			this.frameSelectionComboBox.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.frameSelectionComboBox.Name = "frameSelectionComboBox";
             this.frameSelectionComboBox.Size = new System.Drawing.Size(121, 25);
             this.frameSelectionComboBox.TextChanged += new System.EventHandler(this.onFrameComboBoxChanged);
@@ -405,6 +410,7 @@ namespace D2RModding_SpriteEdit
             // 
             // resetPan
             // 
+			this.resetPan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.resetPan.Location = new System.Drawing.Point(814, 583);
             this.resetPan.Name = "resetPan";
             this.resetPan.Size = new System.Drawing.Size(75, 23);
@@ -414,9 +420,10 @@ namespace D2RModding_SpriteEdit
             // 
             // label1
             // 
+			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(867, 543);
+			this.label1.Location = new System.Drawing.Point(810, 536);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(96, 24);
             this.label1.TabIndex = 7;
@@ -424,6 +431,7 @@ namespace D2RModding_SpriteEdit
             // 
             // MainForm
             // 
+			this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1029, 653);
@@ -438,6 +446,8 @@ namespace D2RModding_SpriteEdit
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "SpriteEdit";
+			this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
+			this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
