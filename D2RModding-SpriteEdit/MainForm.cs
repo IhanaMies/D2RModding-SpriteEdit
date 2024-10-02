@@ -186,9 +186,8 @@ namespace D2RModding_SpriteEdit
         public MainForm()
         {
             InitializeComponent();
-
-            
         }
+
         private void saveAsSprite(Image img, uint fc, string fileName)
         {
             var f = File.Open(fileName, FileMode.OpenOrCreate, FileAccess.Write);
@@ -247,44 +246,45 @@ namespace D2RModding_SpriteEdit
 
 		private void OpenSprite(string filename)
 		{
-                // open up the image
-			var bytes = File.ReadAllBytes(filename);
-                int x, y;
-                var version = BitConverter.ToUInt16(bytes, 4);
-                var width = BitConverter.ToInt32(bytes, 8);
-                var height = BitConverter.ToInt32(bytes, 0xC);
-                var bmp = new Bitmap(width, height);
-                currentFrameCount = BitConverter.ToUInt32(bytes, 0x14);
+            // open up the image
+            var bytes = File.ReadAllBytes(filename);
+            int x, y;
+            var version = BitConverter.ToUInt16(bytes, 4);
+            var width = BitConverter.ToInt32(bytes, 8);
+            var height = BitConverter.ToInt32(bytes, 0xC);
+            var bmp = new Bitmap(width, height);
+            currentFrameCount = BitConverter.ToUInt32(bytes, 0x14);
                 
-			if (version == 31)
-                {   // regular RGBA
-                    for (x = 0; x < height; x++)
+            if (version == 31)
+            {   // regular RGBA
+                for (x = 0; x < height; x++)
+                {
+                    for (y = 0; y < width; y++)
                     {
-                        for (y = 0; y < width; y++)
-                        {
-                            var baseVal = 0x28 + x * 4 * width + y * 4;
-                            bmp.SetPixel(y, x, Color.FromArgb(bytes[baseVal + 3], bytes[baseVal + 0], bytes[baseVal + 1], bytes[baseVal + 2]));
-                        }
+                        var baseVal = 0x28 + x * 4 * width + y * 4;
+                        bmp.SetPixel(y, x, Color.FromArgb(bytes[baseVal + 3], bytes[baseVal + 0], bytes[baseVal + 1], bytes[baseVal + 2]));
                     }
                 }
-			else if (version == 61)
-                {   // DXT
-                    var tempBytes = new byte[width * height * 4];
-                    Dxt.DxtDecoder.DecompressDXT5(bytes, width, height, tempBytes);
-				for (y = 0; y < height; y++)
-                    {
-					for (x = 0; x < width; x++)
-                        {
-                            var baseVal = (y * width) + (x * 4);
-                            bmp.SetPixel(x, y, Color.FromArgb(tempBytes[baseVal + 3], tempBytes[baseVal], tempBytes[baseVal + 1], tempBytes[baseVal + 2]));
-                        }
-                    }
-                }
-
-                currentImage = bmp;
-                toolbarText.Text = string.Format("{0}x{1}", width, height);
-			Text = "SpriteEdit - " + filename;
             }
+            else if (version == 61)
+            {   // DXT
+                var tempBytes = new byte[width * height * 4];
+                Dxt.DxtDecoder.DecompressDXT5(bytes, width, height, tempBytes);
+
+                for (y = 0; y < height; y++)
+                {
+                    for (x = 0; x < width; x++)
+                    {
+                        var baseVal = (y * width) + (x * 4);
+                        bmp.SetPixel(x, y, Color.FromArgb(tempBytes[baseVal + 3], tempBytes[baseVal], tempBytes[baseVal + 1], tempBytes[baseVal + 2]));
+                    }
+                }
+            }
+            
+            currentImage = bmp;
+            toolbarText.Text = string.Format("{0}x{1}", width, height);
+            Text = "SpriteEdit - " + filename;
+        }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
