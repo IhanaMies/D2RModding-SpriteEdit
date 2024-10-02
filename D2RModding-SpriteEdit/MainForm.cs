@@ -396,7 +396,11 @@ namespace D2RModding_SpriteEdit
         private void massExportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();
-            dlg.Filter = "Diablo II Resurrected Sprites (*.sprite)|*.sprite|All Files (*.*)|*.*";
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.LastMassExportSourceDirectory))
+                dlg.InitialDirectory = Properties.Settings.Default.LastMassExportSourceDirectory;
+
+			dlg.Filter = "Diablo II Resurrected Sprites (*.sprite)|*.sprite|All Files (*.*)|*.*";
             dlg.DefaultExt = ".sprite";
             dlg.Multiselect = true;
 
@@ -404,16 +408,26 @@ namespace D2RModding_SpriteEdit
             {
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
-                    var images = new List<Image>();
+					Properties.Settings.Default.LastMassExportSourceDirectory = Path.GetDirectoryName(dlg.FileName);
+                    Properties.Settings.Default.Save();
+
+					var images = new List<Image>();
 
                     if (MessageBox.Show("Now select the directory you would like to export to.", "Notification", MessageBoxButtons.OK) == DialogResult.OK)
                     {
                         var folderBrowserDialog = new FolderBrowserDialog();
-                        folderBrowserDialog.Description = "Select the directory you would like to export to.";
+
+						if (!string.IsNullOrEmpty(Properties.Settings.Default.LastMassExportTargetDirectory))
+							dlg.InitialDirectory = Properties.Settings.Default.LastMassExportTargetDirectory;
+
+						folderBrowserDialog.Description = "Select the directory you would like to export to.";
 
                         if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
-                        {
-                            foreach (var file in dlg.FileNames)
+						{
+							Properties.Settings.Default.LastMassExportSourceDirectory = Path.GetDirectoryName(folderBrowserDialog.SelectedPath);
+							Properties.Settings.Default.Save();
+
+							foreach (var file in dlg.FileNames)
                             {
                                 // open up the image
                                 var bytes = File.ReadAllBytes(file);

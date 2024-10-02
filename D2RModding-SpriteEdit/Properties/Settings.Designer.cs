@@ -9,14 +9,14 @@
 //------------------------------------------------------------------------------
 
 namespace D2RModding_SpriteEdit.Properties {
-
+    
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.11.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-
+        
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-
+        
         public static Settings Default {
             get {
                 return defaultInstance;
@@ -56,6 +56,30 @@ namespace D2RModding_SpriteEdit.Properties {
             }
             set {
                 this["LastExportDirectory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastMassExportSourceDirectory {
+            get {
+                return ((string)(this["LastMassExportSourceDirectory"]));
+            }
+            set {
+                this["LastMassExportSourceDirectory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastMassExportTargetDirectory {
+            get {
+                return ((string)(this["LastMassExportTargetDirectory"]));
+            }
+            set {
+                this["LastMassExportTargetDirectory"] = value;
             }
         }
     }
