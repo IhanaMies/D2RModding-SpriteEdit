@@ -97,7 +97,6 @@ namespace D2RModding_SpriteEdit
             set
             {
                 _currentPan = value;
-                ResetPreview();
             }
         }
 
@@ -121,7 +120,6 @@ namespace D2RModding_SpriteEdit
             }
             newHeight = (int)(currentZoom * sourceHeight);
 
-
             Bitmap temp = new Bitmap(newWidth, newHeight);
             Graphics bmGraphics = Graphics.FromImage(temp);
             bmGraphics.Clear(imagePreview.BackColor);
@@ -129,14 +127,14 @@ namespace D2RModding_SpriteEdit
             if(hasFrames && currentFrameCount > 0)
             {
                 bmGraphics.DrawImage(currentImage,
-                    new Rectangle((int)(currentPan.X * currentZoom), (int)(currentPan.Y * currentZoom), newWidth, newHeight),
+                    new Rectangle((int)(currentZoom), (int)(currentZoom), newWidth, newHeight),
                     new Rectangle(frameWidth * (int)currentlyViewedFrame, 0, frameWidth, sourceHeight),
                     GraphicsUnit.Pixel);
             }
             else
             {
                 bmGraphics.DrawImage(currentImage,
-                    new Rectangle((int)(currentPan.X * currentZoom), (int)(currentPan.Y * currentZoom), newWidth, newHeight),
+                    new Rectangle((int)(currentZoom), (int)(currentZoom), newWidth, newHeight),
                     new Rectangle(0, 0, sourceWidth, sourceHeight),
                     GraphicsUnit.Pixel);
             }
@@ -157,7 +155,7 @@ namespace D2RModding_SpriteEdit
                 zoomAmountLabel.Text = string.Format("{0}%", currentZoom * 100.0f);
                 _currentZoom = value;
                 ResetPreview();
-            }
+			}
         }
 
         private Image _currentImage;
@@ -168,8 +166,8 @@ namespace D2RModding_SpriteEdit
                 return _currentImage;
             }
             set
-            {
-                exportToolStripMenuItem.Enabled = true;
+			{
+				exportToolStripMenuItem.Enabled = true;
                 saveToolStripMenuItem.Enabled = true;
                 rotate90ToolStripMenuItem.Enabled = true;
                 rotate_180.Enabled = true;
@@ -181,7 +179,8 @@ namespace D2RModding_SpriteEdit
                 _currentImage = value;
                 numFramesTextBox.Enabled = true;
                 ResetPreview();
-            }
+				currentPan = GetImageCenterPoint();
+			}
         }
         public MainForm()
         {
@@ -284,7 +283,9 @@ namespace D2RModding_SpriteEdit
             currentImage = bmp;
             toolbarText.Text = string.Format("{0}x{1}", width, height);
             Text = "SpriteEdit - " + filename;
-        }
+
+			imagePreview.Invalidate();
+		}
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -506,7 +507,9 @@ namespace D2RModding_SpriteEdit
         {
             if(isPanning)
             {
-                currentPan = new Point(e.Location.X - mouseDownLocation.X, e.Location.Y - mouseDownLocation.Y);
+                Point center = GetImageCenterPoint();
+                currentPan = new Point(e.Location.X - mouseDownLocation.X + center.X, e.Location.Y - mouseDownLocation.Y + center.Y);
+                imagePreview.Invalidate();
             }
         }
         private void onMouseLeave(object sender, EventArgs e)
@@ -515,9 +518,27 @@ namespace D2RModding_SpriteEdit
         }
         private void onResetPan(object sender, EventArgs e)
         {
-            currentPan = new Point(0, 0);
+            currentPan = GetImageCenterPoint();
+            imagePreview.Invalidate();
+		}
+
+        private Point GetImageCenterPoint()
+        {
+            int x = imagePreview.Size.Width / 2 - imagePreview.Image.Width / 2;
+			int y = imagePreview.Size.Height / 2 - imagePreview.Image.Height / 2;
+
+            return new Point(x, y);
         }
-        private void rotate_180_Click(object sender, EventArgs e)
+
+		private void imagePreview_Paint(object sender, PaintEventArgs e)
+		{
+            if (imagePreview?.Image != null)
+			{
+                e.Graphics.Clear(Color.White);
+				e.Graphics.DrawImage(imagePreview.Image, currentPan);
+			}
+		}
+		private void rotate_180_Click(object sender, EventArgs e)
         {
             Bitmap temp = new Bitmap(currentImage);
             temp.RotateFlip(RotateFlipType.Rotate180FlipNone);
@@ -908,5 +929,5 @@ namespace D2RModding_SpriteEdit
 			string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             OpenSprite(files[0]);
 		}
-    }
+	}
 }
