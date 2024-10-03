@@ -131,7 +131,11 @@ namespace D2RModding_SpriteEdit
             Graphics bmGraphics = Graphics.FromImage(temp);
             bmGraphics.Clear(imagePreview.BackColor);
             bmGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            if(hasFrames && currentFrameCount > 0)
+
+			//TODO: Sometimes images drift very slighty, about a pixel, each frame
+			//It is likely caused by imperfect image/frame width
+			//Drifting doesn't happen if image is (framewidth * framecount) wide
+			if (hasFrames && currentFrameCount > 0)
             {
                 bmGraphics.DrawImage(currentImage,
                     new Rectangle((int)(currentZoom), (int)(currentZoom), newWidth, newHeight),
@@ -252,8 +256,12 @@ namespace D2RModding_SpriteEdit
 
 		private void OpenSprite(string filename)
 		{
-            // open up the image
-            var bytes = File.ReadAllBytes(filename);
+            //use tag to hold filename and use it when e.g. exporting frames
+            //a bit hacky
+			imagePreview.Tag = Path.GetFileNameWithoutExtension(filename);
+
+			// open up the image
+			var bytes = File.ReadAllBytes(filename);
             int x, y;
             var version = BitConverter.ToUInt16(bytes, 4);
             var width = BitConverter.ToInt32(bytes, 8);
@@ -416,7 +424,7 @@ namespace D2RModding_SpriteEdit
             {
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
-					Properties.Settings.Default.LastMassExportSourceDirectory = Path.GetDirectoryName(dlg.FileName);
+					Properties.Settings.Default.LastMassExportSourceDirectory = Path.GetDirectoryName(dlg.FileNames[0]);
                     Properties.Settings.Default.Save();
 
 					var images = new List<Image>();
@@ -426,13 +434,13 @@ namespace D2RModding_SpriteEdit
                         var folderBrowserDialog = new FolderBrowserDialog();
 
 						if (!string.IsNullOrEmpty(Properties.Settings.Default.LastMassExportTargetDirectory))
-							dlg.InitialDirectory = Properties.Settings.Default.LastMassExportTargetDirectory;
+							folderBrowserDialog.SelectedPath = Properties.Settings.Default.LastMassExportTargetDirectory;						
 
 						folderBrowserDialog.Description = "Select the directory you would like to export to.";
 
                         if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
 						{
-							Properties.Settings.Default.LastMassExportSourceDirectory = Path.GetDirectoryName(folderBrowserDialog.SelectedPath);
+							Properties.Settings.Default.LastMassExportTargetDirectory = Path.GetDirectoryName(folderBrowserDialog.SelectedPath);
 							Properties.Settings.Default.Save();
 
 							foreach (var file in dlg.FileNames)
@@ -844,7 +852,14 @@ namespace D2RModding_SpriteEdit
             }
 
             SaveFileDialog dlg = new SaveFileDialog();
-            dlg.Filter = "BMP|*.bmp|GIF|*.gif|JPG|*.jpg;*.jpeg|PNG|*.png|TIFF|*.tif;*.tiff|"
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.LastExportDirectory))
+                dlg.InitialDirectory = Properties.Settings.Default.LastExportDirectory;            
+
+            if (imagePreview.Tag != null)
+                dlg.FileName = $"{(string)imagePreview.Tag}_{currentlyViewedFrame}";
+
+			dlg.Filter = "BMP|*.bmp|GIF|*.gif|JPG|*.jpg;*.jpeg|PNG|*.png|TIFF|*.tif;*.tiff|"
                 + "All Graphics Types|*.bmp;*.jpg;*.jpeg;*.png;*.tif;*.tiff|"
                 + "All Files (*.*)|*.*";
             dlg.DefaultExt = "*.bmp;*.jpg;*.jpeg;*.png;*.tif;*.tiff";
@@ -877,6 +892,9 @@ namespace D2RModding_SpriteEdit
 
             SaveFileDialog dlg = new SaveFileDialog();
 
+            if (imagePreview.Tag != null)
+                dlg.FileName = (string)imagePreview.Tag;
+
             if (!string.IsNullOrEmpty(Properties.Settings.Default.LastExportDirectory))
                 dlg.InitialDirectory = Properties.Settings.Default.LastExportDirectory;
 
@@ -899,12 +917,12 @@ namespace D2RModding_SpriteEdit
                 var fileName = dlg.FileName;
                 int widthPerFrame = (int)(currentImage.Width / currentFrameCount);
 
-                for(var i = 0; i < currentFrameCount; i++)
-                {
-                    var thisFrameFileName = AddSuffix(fileName, "_" + i);
-                    Bitmap subbmp = new Bitmap(currentImage).Clone(new Rectangle((int)i * widthPerFrame, 0, widthPerFrame, currentImage.Height),
-                        currentImage.PixelFormat);
-                    subbmp.Save(thisFrameFileName);
+                for (var i = 0; i < currentFrameCount; i++)
+					{
+						var thisFrameFileName = AddSuffix(fileName, "_" + i);
+						Bitmap subbmp = new Bitmap(currentImage).Clone(new Rectangle(i * widthPerFrame, 0, widthPerFrame, currentImage.Height),
+							currentImage.PixelFormat);
+						subbmp.Save(thisFrameFileName);
                 }
             }
         }
